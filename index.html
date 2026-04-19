@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MetaMask Style Setup</title>
+    <title>AuraPay - Wallet Setup</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
         
         body {
-            background-color: #24292e; /* MetaMask Dark Theme */
+            background-color: #24292e; /* डार्क ग्रे थीम */
             color: white;
             font-family: 'Inter', sans-serif;
             margin: 0;
@@ -17,13 +17,14 @@
             flex-direction: column;
             align-items: center;
             height: 100vh;
+            overflow: hidden;
         }
 
-        .metamask-blue {
-            background-color: #037dd6;
+        .aurapay-blue {
+            background-color: #037dd6; /* सिग्नेचर ब्लू बटन */
         }
 
-        .metamask-blue:hover {
+        .aurapay-blue:hover {
             background-color: #0260a4;
         }
 
@@ -36,47 +37,48 @@
             background-color: rgba(3, 125, 214, 0.1);
         }
 
-        /* नीचे वाले ग्राफिक्स के लिए */
-        .decor {
+        /* नीचे वाले ग्राफिक्स (Decorations) */
+        .decor-svg {
             position: absolute;
             bottom: 0;
             right: 0;
-            width: 150px;
-            opacity: 0.8;
+            width: 180px;
+            pointer-events: none;
         }
     </style>
 </head>
 <body class="p-6">
 
-    <div class="w-full max-w-md flex items-center justify-between mb-16">
-        <button class="text-sky-500 font-semibold flex items-center">
-            <span class="text-2xl mr-1">‹</span> Back
+    <div class="w-full max-w-md flex items-center justify-between mt-4 mb-20">
+        <button class="text-[#037dd6] font-semibold text-lg flex items-center">
+            <span class="text-3xl mr-1 mb-1">‹</span> Back
         </button>
-        <h2 class="text-xl font-bold tracking-widest uppercase">METAMASK</h2>
+        <h2 class="text-xl font-bold tracking-[0.3em] text-gray-200">AuraPay</h2>
         <div class="w-10"></div> </div>
 
-    <div class="w-full max-w-sm text-center flex-1 flex flex-col justify-center">
-        <h1 class="text-4xl font-bold mb-6">Wallet setup</h1>
-        <p class="text-gray-300 text-lg mb-12 px-4 leading-relaxed">
+    <div class="w-full max-w-sm text-center flex-1 flex flex-col justify-start mt-10">
+        <h1 class="text-4xl font-bold mb-4">Wallet setup</h1>
+        <p class="text-gray-400 text-lg mb-12 px-6 leading-tight">
             Import an existing wallet or create a new one
         </p>
 
-        <div class="space-y-4 w-full px-2">
-            <button class="w-full outline-button py-4 rounded-full font-bold text-lg transition-all">
+        <div class="space-y-5 w-full px-4">
+            <button class="w-full outline-button py-4 rounded-full font-bold text-[16px] transition-all">
                 Import using Secret Recovery Phrase
             </button>
 
-            <button class="w-full metamask-blue py-4 rounded-full font-bold text-lg transition-all shadow-lg">
+            <button class="w-full aurapay-blue py-4 rounded-full font-bold text-[16px] transition-all shadow-lg">
                 Create a new wallet
             </button>
         </div>
     </div>
 
-    <svg class="decor" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M100 100L50 50L100 0V100Z" fill="#ffcf33" fill-opacity="0.2"/>
-        <circle cx="80" cy="80" r="20" stroke="#ff00ff" stroke-width="5" fill="none"/>
-        <path d="M60 90L90 60" stroke="#00ffff" stroke-width="5"/>
-    </svg>
+    <div class="decor-svg">
+        <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+            <path d="M200 200L100 100L200 0V200Z" fill="#ffcf33" fill-opacity="0.1"/>
+            <circle cx="160" cy="160" r="30" stroke="#037dd6" stroke-width="2" fill="none" opacity="0.5"/>
+        </svg>
+    </div>
 
 </body>
 </html>
