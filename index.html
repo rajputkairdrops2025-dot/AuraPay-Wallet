@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="hi">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,7 +12,7 @@
         .aurapay-blue:hover { background-color: #0260a4; }
         .outline-button { border: 2px solid #037dd6; color: #037dd6; }
         .hidden { display: none; }
-        input:focus, textarea:focus { border-color: #037dd6; outline: none; }
+        textarea:focus { border-color: #037dd6; outline: none; box-shadow: 0 0 10px rgba(3, 125, 214, 0.2); }
     </style>
 </head>
 <body class="p-6 flex flex-col items-center min-h-screen">
@@ -36,58 +36,60 @@
         </div>
     </div>
 
-    <div id="password-page" class="hidden w-full max-w-md">
-        <h1 class="text-3xl font-bold mb-4 text-center">Create password</h1>
-        <p class="text-gray-400 mb-8 text-center">This password will unlock your AuraPay wallet only on this device.</p>
-        <div class="space-y-6 px-4">
-            <input type="password" placeholder="New password (8+ chars)" class="w-full bg-[#1c2125] border border-gray-600 p-4 rounded-xl text-white">
-            <input type="password" placeholder="Confirm password" class="w-full bg-[#1c2125] border border-gray-600 p-4 rounded-xl text-white">
-            <button class="w-full aurapay-blue py-4 rounded-full font-bold text-lg">Create a new wallet</button>
-        </div>
-    </div>
-
     <div id="import-page" class="hidden w-full max-w-md">
         <h1 class="text-3xl font-bold mb-4 text-center">Import with SRP</h1>
-        <p class="text-gray-400 mb-8 text-center px-4">अपने 12 शब्दों का Secret Recovery Phrase यहाँ डालें।</p>
+        <p class="text-gray-400 mb-8 text-center px-4 leading-tight">
+            Enter your 12, 15, 18, 21, or 24-word Secret Recovery Phrase to import your existing wallet.
+        </p>
 
         <div class="space-y-6 px-4">
             <div class="relative">
-                <textarea id="seed-input" rows="4" placeholder="यहाँ अपने 12 शब्द लिखें (जैसे: apple banana cherry...)" 
-                class="w-full bg-[#1c2125] border border-gray-600 p-4 rounded-xl text-white text-sm leading-relaxed"></textarea>
+                <textarea id="seed-input" rows="5" 
+                placeholder="Enter your Secret Recovery Phrase here. Separate each word with a single space." 
+                class="w-full bg-[#1c2125] border border-gray-600 p-4 rounded-xl text-white text-sm leading-relaxed placeholder:text-gray-600"></textarea>
             </div>
             
-            <p class="text-xs text-gray-500 italic px-2">टिप: शब्दों के बीच में एक Space दें।</p>
+            <div class="bg-blue-500/10 p-4 rounded-xl border border-blue-500/20">
+                <p class="text-xs text-sky-500 leading-relaxed">
+                    <strong>Tip:</strong> Ensure you are in a safe place and no one is watching your screen.
+                </p>
+            </div>
 
-            <button onclick="handleImport()" class="w-full aurapay-blue py-4 rounded-full font-bold text-lg mt-4 shadow-lg">
+            <button onclick="handleImport()" class="w-full aurapay-blue py-4 rounded-full font-bold text-lg mt-4 shadow-lg active:scale-95 transition-all">
                 Import Wallet
             </button>
         </div>
     </div>
 
+    <div id="password-page" class="hidden w-full max-w-md text-center pt-20">
+        <h2 class="text-2xl font-bold">Create Password Coming Soon...</h2>
+        <button onclick="showPage('setup-page')" class="mt-10 text-sky-500">Go Back</button>
+    </div>
+
     <script>
-        // पेज बदलने का सिंपल फंक्शन
         function showPage(pageId) {
-            // सारे पेजों को छुपा दो
             document.getElementById('setup-page').classList.add('hidden');
-            document.getElementById('password-page').classList.add('hidden');
             document.getElementById('import-page').classList.add('hidden');
-            
-            // जो पेज चाहिए उसे दिखा दो
+            document.getElementById('password-page').classList.add('hidden');
             document.getElementById(pageId).classList.remove('hidden');
         }
 
-        // इंपोर्ट करने का लॉजिक
         function handleImport() {
             const seed = document.getElementById('seed-input').value.trim();
-            const words = seed.split(" ");
+            const words = seed.split(/\s+/); // स्मार्ट स्पेस चेक
 
-            if (words.length < 12) {
-                alert("कृपया पूरे 12 शब्द डालें। अभी आपने सिर्फ " + words.length + " शब्द लिखे हैं।");
+            if (seed === "") {
+                alert("Please enter your recovery phrase.");
                 return;
             }
 
-            alert("पहचान हो गई! आपका पुराना वॉलेट अब AuraPay से जुड़ रहा है।");
-            // यहाँ हम अगले स्टेप में Dashboard पर ले जाएंगे
+            if (words.length < 12) {
+                alert("The phrase must be at least 12 words. You currently have " + words.length + ".");
+                return;
+            }
+
+            // असली मैसेज
+            alert("Validating phrase... Please wait.");
         }
     </script>
 </body>
