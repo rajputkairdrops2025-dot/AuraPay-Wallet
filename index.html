@@ -3,431 +3,80 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AuraPay - Professional Web3 Wallet</title>
+    <title>MetaMask Style Setup</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
     <style>
-        :root {
-            --mehandi-dark: #0b140d; /* डार्क मेहंदी रंग */
-            --mehandi-light: #1a2e1f;
-        }
-        body {
-            background-color: var(--mehandi-dark);
-            color: white;
-            font-family: -apple-system, system-ui, sans-serif;
-            overflow: hidden;
-        }
-        .btn-blue { background-color: #007aff; }
-        .glass-card { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); }
-        .numpad-btn { background: rgba(255, 255, 255, 0.08); border-radius: 50%; width: 70px; height: 70px; font-size: 24px; }
-        .hidden { display: none; }
-    </style>
-</head>
-<body>
-
-    <div id="screen-welcome" class="flex flex-col items-center justify-between min-h-screen p-8 w-full max-w-md mx-auto">
-        <div class="mt-20 flex flex-col items-center">
-            <div class="w-24 h-24 bg-sky-500 rounded-3xl rotate-45 flex items-center justify-center shadow-2xl mb-10">
-                <span class="rotate-[-45deg] text-4xl font-bold italic">AP</span>
-            </div>
-            <h1 class="text-3xl font-bold">AuraPay</h1>
-            <p class="text-gray-400 mt-2">Create a new wallet or add an existing one</p>
-        </div>
-        <div class="w-full space-y-4 mb-10">
-            <button onclick="goToPasscode('create')" class="w-full btn-blue py-4 rounded-2xl font-bold text-lg">Create New Wallet</button>
-            <button onclick="showImport()" class="w-full bg-white/10 py-4 rounded-2xl font-bold text-lg border border-white/10">Import Existing Wallet</button>
-        </div>
-    </div>
-
-    <div id="screen-passcode" class="hidden flex flex-col items-center justify-center min-h-screen p-8 w-full max-w-md mx-auto">
-        <h2 class="text-2xl font-bold mb-2">Create passcode</h2>
-        <div class="flex gap-4 mb-20 mt-4">
-            <div id="dot-1" class="w-3 h-3 rounded-full border border-gray-500"></div>
-            <div id="dot-2" class="w-3 h-3 rounded-full border border-gray-500"></div>
-            <div id="dot-3" class="w-3 h-3 rounded-full border border-gray-500"></div>
-            <div id="dot-4" class="w-3 h-3 rounded-full border border-gray-500"></div>
-        </div>
-        <div class="grid grid-cols-3 gap-8">
-            <button class="numpad-btn" onclick="pressKey(1)">1</button>
-            <button class="numpad-btn" onclick="pressKey(2)">2</button>
-            <button class="numpad-btn" onclick="pressKey(3)">3</button>
-            <button class="numpad-btn" onclick="pressKey(4)">4</button>
-            <button class="numpad-btn" onclick="pressKey(5)">5</button>
-            <button class="numpad-btn" onclick="pressKey(6)">6</button>
-            <button class="numpad-btn" onclick="pressKey(7)">7</button>
-            <button class="numpad-btn" onclick="pressKey(8)">8</button>
-            <button class="numpad-btn" onclick="pressKey(9)">9</button>
-            <div></div>
-            <button class="numpad-btn" onclick="pressKey(0)">0</button>
-            <button class="text-2xl" onclick="backspace()">⌫</button>
-        </div>
-    </div>
-
-    <div id="screen-main" class="hidden flex flex-col min-h-screen w-full max-w-md mx-auto">
-        <div class="p-6 flex justify-between items-center">
-            <button class="text-xl">💬</button>
-            <div class="bg-white/10 px-4 py-1 rounded-full text-sm font-medium">Wallet ∨</div>
-            <button class="text-xl">⚙️</button>
-        </div>
-
-        <div class="text-center py-10">
-            <h1 id="main-balance" class="text-5xl font-bold">$0 <span class="text-xl text-sky-400">⚡</span></h1>
-            <p id="main-address" class="text-gray-500 text-xs mt-4 font-mono"></p>
-        </div>
-
-        <div class="grid grid-cols-3 gap-4 px-6 mb-8 text-center">
-            <div class="flex flex-col items-center"><button class="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center text-xl mb-2">↑</button><span class="text-xs">Send</span></div>
-            <div class="flex flex-col items-center"><button class="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center text-xl mb-2">↓</button><span class="text-xs">Receive</span></div>
-            <div class="flex flex-col items-center"><button class="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center text-xl mb-2">⛶</button><span class="text-xs">Scan</span></div>
-            <div class="flex flex-col items-center"><button class="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center text-xl mb-2">⇄</button><span class="text-xs">Swap</span></div>
-            <div class="flex flex-col items-center"><button class="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center text-xl mb-2">$</button><span class="text-xs">Buy</span></div>
-            <div class="flex flex-col items-center"><button class="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center text-xl mb-2">📈</button><span class="text-xs">Stake</span></div>
-        </div>
-
-        <div class="px-6 space-y-3 overflow-y-auto pb-24">
-            <h3 class="font-bold">Finish setting up</h3>
-            <div class="bg-white/5 p-4 rounded-2xl flex items-center gap-4">
-                <span class="text-2xl text-orange-400">🔑</span>
-                <div class="flex-1">
-                    <p class="text-sm font-bold">Back up your recovery phrase</p>
-                    <p class="text-[10px] text-gray-500">Without it, you can't restore your wallet</p>
-                </div>
-            </div>
-            <div class="bg-white/5 p-4 rounded-2xl flex justify-between items-center">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 bg-sky-500 rounded-full flex items-center justify-center font-bold">T</div>
-                    <div><p class="font-bold">TON</p><p class="text-[10px] text-gray-500">$1.29 <span class="text-red-500">-2.38%</span></p></div>
-                </div>
-                <div class="text-right"><p class="font-bold">0</p><p class="text-[10px] text-gray-500">$0</p></div>
-            </div>
-        </div>
-
-        <div class="fixed bottom-0 w-full max-w-md bg-black/40 backdrop-blur-md flex justify-around py-4 border-t border-white/5">
-            <span class="text-sky-400 flex flex-col items-center text-[10px]">👛<br>Wallet</span>
-            <span class="text-gray-500 flex flex-col items-center text-[10px]">🕒<br>History</span>
-            <span class="text-gray-500 flex flex-col items-center text-[10px]">🧭<br>Browser</span>
-            <span class="text-gray-500 flex flex-col items-center text-[10px]">⭐<br>Collectibles</span>
-        </div>
-    </div>
-
-    <script>
-        let pin = "";
-        let mode = "";
-
-        function goToPasscode(m) {
-            mode = m;
-            document.getElementById('screen-welcome').classList.add('hidden');
-            document.getElementById('screen-passcode').classList.remove('hidden');
-        }
-
-        function pressKey(num) {
-            if (pin.length < 4) {
-                pin += num;
-                updateDots();
-                if (pin.length === 4) {
-                    setTimeout(finishSetup, 300);
-                }
-            }
-        }
-
-        function backspace() {
-            pin = pin.slice(0, -1);
-            updateDots();
-        }
-
-        function updateDots() {
-            for (let i = 1; i <= 4; i++) {
-                const dot = document.getElementById(`dot-${i}`);
-                if (i <= pin.length) {
-                    dot.classList.add('bg-white');
-                } else {
-                    dot.classList.remove('bg-white');
-                }
-            }
-        }
-
-        function finishSetup() {
-            if (mode === 'create') {
-                const wallet = ethers.Wallet.createRandom();
-                localStorage.setItem('aura_addr', wallet.address);
-                document.getElementById('main-address').innerText = wallet.address.substring(0,6) + "..." + wallet.address.substring(38);
-                alert("Your Seed Phrase: " + wallet.mnemonic.phrase + "\n\nइसे सुरक्षित लिख लें!");
-            }
-            document.getElementById('screen-passcode').classList.add('hidden');
-            document.getElementById('screen-main').classList.remove('hidden');
-        }
-
-        function showImport() {
-            const seed = prompt("Enter 12-word seed phrase:");
-            if(seed) {
-                try {
-                    const wallet = ethers.Wallet.fromMnemonic(seed.trim());
-                    localStorage.setItem('aura_addr', wallet.address);
-                    goToPasscode('import');
-                } catch(e) { alert("Invalid Seed!"); }
-            }
-        }
-    </script>
-</body>
-</html>
-<!DOCTYPE html>
-<html lang="hi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AuraPay - Multi-Chain Pro</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
-    <style>
-        :root { --mehandi: #0b140d; --sky: #38bdf8; }
-        body { background-color: var(--mehandi); color: white; font-family: sans-serif; overflow: hidden; }
-        .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.05); }
-        .chain-card { transition: all 0.3s ease; cursor: pointer; }
-        .chain-card:hover { background: rgba(255, 255, 255, 0.08); }
-        .hidden { display: none; }
-    </style>
-</head>
-<body class="max-w-md mx-auto min-h-screen flex flex-col">
-
-    <div id="welcome-screen" class="flex-1 flex flex-col items-center justify-between p-10">
-        <div class="mt-20 text-center">
-            <div class="w-24 h-24 bg-sky-500 rounded-[2rem] rotate-45 flex items-center justify-center shadow-2xl mx-auto mb-10">
-                <span class="rotate-[-45deg] text-4xl font-black">AP</span>
-            </div>
-            <h1 class="text-3xl font-bold">AuraPay</h1>
-            <p class="text-gray-500 text-sm mt-2">The Multi-Chain Secure Wallet</p>
-        </div>
-        <div class="w-full space-y-4">
-            <button onclick="initWallet('create')" class="w-full bg-sky-500 text-black py-4 rounded-2xl font-bold text-lg">Create New Wallet</button>
-            <button onclick="initWallet('import')" class="w-full bg-white/5 py-4 rounded-2xl font-bold text-lg border border-white/10">Import Seed Phrase</button>
-        </div>
-    </div>
-
-    <div id="dash-screen" class="hidden flex-1 flex flex-col">
-        <div class="p-6 flex justify-between items-center">
-            <div class="w-8 h-8 rounded-full bg-sky-500/20 flex items-center justify-center text-sky-500 text-xs font-bold">A</div>
-            <div class="glass px-4 py-1 rounded-full text-[10px] font-bold tracking-widest uppercase">Mainnet v1.0</div>
-            <button onclick="location.reload()" class="text-xl text-gray-400">⚙️</button>
-        </div>
-
-        <div class="text-center py-8">
-            <p class="text-gray-500 text-xs uppercase tracking-widest mb-2">Total Assets</p>
-            <h1 id="total-balance" class="text-5xl font-bold">$0.00</h1>
-            <p id="wallet-addr" class="text-[10px] text-sky-500 font-mono mt-4 opacity-70 truncate px-10"></p>
-        </div>
-
-        <div class="flex justify-center gap-6 mb-10">
-            <button class="flex flex-col items-center gap-2"><div class="w-14 h-14 rounded-2xl glass flex items-center justify-center text-xl">↑</div><span class="text-[10px] text-gray-400">Send</span></button>
-            <button class="flex flex-col items-center gap-2"><div class="w-14 h-14 rounded-2xl glass flex items-center justify-center text-xl">↓</div><span class="text-[10px] text-gray-400">Receive</span></button>
-            <button class="flex flex-col items-center gap-2"><div class="w-14 h-14 rounded-2xl glass flex items-center justify-center text-xl">⇄</div><span class="text-[10px] text-gray-400">Swap</span></button>
-        </div>
-
-        <div class="flex-1 overflow-y-auto px-6 space-y-3 pb-24">
-            <h3 class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-4">Your Assets</h3>
-            
-            <div class="chain-card glass p-4 rounded-2xl flex justify-between items-center">
-                <div class="flex items-center gap-4">
-                    <div class="w-10 h-10 bg-yellow-500 rounded-full flex items-center justify-center font-bold text-black text-xs">BNB</div>
-                    <div><p class="font-bold text-sm">BNB Smart Chain</p><p class="text-[10px] text-gray-500">0.00 BNB</p></div>
-                </div>
-                <p class="font-bold text-sm">$0.00</p>
-            </div>
-
-            <div class="chain-card glass p-4 rounded-2xl flex justify-between items-center opacity-60">
-                <div class="flex items-center gap-4">
-                    <div class="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center font-bold text-white text-xs">ETH</div>
-                    <div><p class="font-bold text-sm">Ethereum</p><p class="text-[10px] text-gray-500">0.00 ETH</p></div>
-                </div>
-                <p class="font-bold text-sm">$0.00</p>
-            </div>
-
-            <div class="chain-card glass p-4 rounded-2xl flex justify-between items-center opacity-60">
-                <div class="flex items-center gap-4">
-                    <div class="w-10 h-10 bg-purple-600 rounded-full flex items-center justify-center font-bold text-white text-xs">POL</div>
-                    <div><p class="font-bold text-sm">Polygon</p><p class="text-[10px] text-gray-500">0.00 POL</p></div>
-                </div>
-                <p class="font-bold text-sm">$0.00</p>
-            </div>
-        </div>
-
-        <div class="fixed bottom-0 w-full max-w-md bg-[#0b140d]/80 backdrop-blur-xl border-t border-white/5 flex justify-around py-4">
-            <span class="text-sky-400 flex flex-col items-center text-[10px] font-bold">👛<br>Assets</span>
-            <span class="text-gray-500 flex flex-col items-center text-[10px]">🕒<br>History</span>
-            <span class="text-gray-500 flex flex-col items-center text-[10px]">🧭<br>DApps</span>
-        </div>
-    </div>
-
-    <script>
-        // UjQMjVIm3kQscyr2lEJ_i
-        const API_KEY = "UjQMjVIm3kQscyr2lEJ_i";
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
         
-        let wallet = null;
-
-        function initWallet(mode) {
-            if (mode === 'create') {
-                wallet = ethers.Wallet.createRandom();
-                alert("यह आपके 12 शब्द हैं, इन्हें कागज पर लिख लें:\n\n" + wallet.mnemonic.phrase);
-            } else {
-                const phrase = prompt("अपने 12 शब्द यहाँ डालें:");
-                try { wallet = ethers.Wallet.fromMnemonic(phrase.trim()); } catch(e) { return alert("Invalid Seed!"); }
-            }
-            
-            document.getElementById('welcome-screen').classList.add('hidden');
-            document.getElementById('dash-screen').classList.remove('hidden');
-            document.getElementById('wallet-addr').innerText = wallet.address;
-            
-            // यहाँ से 2FA सेटअप शुरू होगा
-            setup2FA();
+        body {
+            background-color: #24292e; /* MetaMask Dark Theme */
+            color: white;
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh;
         }
 
-        function setup2FA() {
-            // Google Authenticator का लॉजिक हम यहाँ अगले स्टेप में डालेंगे
-            console.log("Setting up 2FA Protection...");
+        .metamask-blue {
+            background-color: #037dd6;
         }
-    </script>
-</body>
-</html> <!DOCTYPE html>
-<html lang="hi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AuraPay - Multi-Chain</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
-    <style>
-        :root { --mehandi: #0b140d; }
-        body { background-color: var(--mehandi); color: white; font-family: sans-serif; overflow: hidden; }
-        .glass { background: rgba(255, 255, 255, 0.04); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.06); }
-        .hidden { display: none; }
-        .numpad { background: rgba(255, 255, 255, 0.08); width: 70px; height: 70px; border-radius: 50%; font-size: 24px; }
+
+        .metamask-blue:hover {
+            background-color: #0260a4;
+        }
+
+        .outline-button {
+            border: 2px solid #037dd6;
+            color: #037dd6;
+        }
+
+        .outline-button:hover {
+            background-color: rgba(3, 125, 214, 0.1);
+        }
+
+        /* नीचे वाले ग्राफिक्स के लिए */
+        .decor {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 150px;
+            opacity: 0.8;
+        }
     </style>
 </head>
-<body class="max-w-md mx-auto min-h-screen flex flex-col">
+<body class="p-6">
 
-    <div id="scr-welcome" class="flex-1 flex flex-col items-center justify-between p-10">
-        <div class="mt-20 text-center">
-            <div class="w-24 h-24 bg-sky-500 rounded-[2.2rem] rotate-45 flex items-center justify-center shadow-[0_0_50px_rgba(14,165,233,0.3)] mx-auto mb-10">
-                <span class="rotate-[-45deg] text-4xl font-black italic">AP</span>
-            </div>
-            <h1 class="text-3xl font-bold">AuraPay</h1>
-            <p class="text-gray-500 text-sm mt-2">Professional Crypto Wallet</p>
-        </div>
-        <div class="w-full space-y-4 mb-10">
-            <button onclick="startAction('create')" class="w-full bg-sky-500 text-black py-4 rounded-2xl font-bold text-lg">Create New Wallet</button>
-            <button onclick="startAction('import')" class="w-full bg-white/5 py-4 rounded-2xl font-bold text-lg border border-white/10">Import Existing Wallet</button>
-        </div>
-    </div>
+    <div class="w-full max-w-md flex items-center justify-between mb-16">
+        <button class="text-sky-500 font-semibold flex items-center">
+            <span class="text-2xl mr-1">‹</span> Back
+        </button>
+        <h2 class="text-xl font-bold tracking-widest uppercase">METAMASK</h2>
+        <div class="w-10"></div> </div>
 
-    <div id="scr-pin" class="hidden flex-1 flex flex-col items-center justify-center p-8">
-        <h2 class="text-2xl font-bold mb-10">Set Passcode</h2>
-        <div id="dots" class="flex gap-6 mb-20">
-            <div class="w-4 h-4 rounded-full border border-gray-500"></div>
-            <div class="w-4 h-4 rounded-full border border-gray-500"></div>
-            <div class="w-4 h-4 rounded-full border border-gray-500"></div>
-            <div class="w-4 h-4 rounded-full border border-gray-500"></div>
-        </div>
-        <div class="grid grid-cols-3 gap-8">
-            <button class="numpad" onclick="press(1)">1</button>
-            <button class="numpad" onclick="press(2)">2</button>
-            <button class="numpad" onclick="press(3)">3</button>
-            <button class="numpad" onclick="press(4)">4</button>
-            <button class="numpad" onclick="press(5)">5</button>
-            <button class="numpad" onclick="press(6)">6</button>
-            <button class="numpad" onclick="press(7)">7</button>
-            <button class="numpad" onclick="press(8)">8</button>
-            <button class="numpad" onclick="press(9)">9</button>
-            <div></div><button class="numpad" onclick="press(0)">0</button>
-            <button class="text-xl" onclick="pin=''; updateDots();">⌫</button>
+    <div class="w-full max-w-sm text-center flex-1 flex flex-col justify-center">
+        <h1 class="text-4xl font-bold mb-6">Wallet setup</h1>
+        <p class="text-gray-300 text-lg mb-12 px-4 leading-relaxed">
+            Import an existing wallet or create a new one
+        </p>
+
+        <div class="space-y-4 w-full px-2">
+            <button class="w-full outline-button py-4 rounded-full font-bold text-lg transition-all">
+                Import using Secret Recovery Phrase
+            </button>
+
+            <button class="w-full metamask-blue py-4 rounded-full font-bold text-lg transition-all shadow-lg">
+                Create a new wallet
+            </button>
         </div>
     </div>
 
-    <div id="scr-dash" class="hidden flex-1 flex flex-col">
-        <div class="p-6 flex justify-between items-center">
-            <div class="bg-sky-500/20 px-4 py-1 rounded-full text-[10px] font-bold text-sky-400">BNB SMART CHAIN</div>
-            <button onclick="location.reload()" class="text-xl">⚙️</button>
-        </div>
+    <svg class="decor" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M100 100L50 50L100 0V100Z" fill="#ffcf33" fill-opacity="0.2"/>
+        <circle cx="80" cy="80" r="20" stroke="#ff00ff" stroke-width="5" fill="none"/>
+        <path d="M60 90L90 60" stroke="#00ffff" stroke-width="5"/>
+    </svg>
 
-        <div class="text-center py-10">
-            <p class="text-gray-500 text-xs uppercase tracking-widest mb-2">My Balance</p>
-            <h1 id="main-val" class="text-5xl font-bold">$0.00</h1>
-            <p id="my-addr" class="text-[10px] text-sky-500 font-mono mt-4 opacity-60 truncate px-10"></p>
-        </div>
-
-        <div class="px-6 space-y-3 flex-1 overflow-y-auto pb-24">
-            <div class="glass p-4 rounded-2xl flex justify-between items-center">
-                <div class="flex items-center gap-4">
-                    <div class="w-10 h-10 bg-yellow-500 rounded-full flex items-center justify-center font-bold text-black text-xs">BNB</div>
-                    <div><p class="font-bold text-sm">BNB Smart Chain</p><p id="bnb-bal" class="text-[10px] text-gray-400">0.0000 BNB</p></div>
-                </div>
-                <p class="font-bold text-sm">$0.00</p>
-            </div>
-            
-            <div class="glass p-4 rounded-2xl flex justify-between items-center opacity-50">
-                <div class="flex items-center gap-4">
-                    <div class="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center font-bold text-xs text-white">ETH</div>
-                    <div><p class="font-bold text-sm">Ethereum</p><p class="text-[10px] text-gray-400">Coming Soon</p></div>
-                </div>
-            </div>
-        </div>
-
-        <div class="fixed bottom-0 w-full max-w-md bg-black/60 backdrop-blur-md flex justify-around py-4 border-t border-white/5">
-            <span class="text-sky-400 text-[10px] text-center font-bold">👛<br>Assets</span>
-            <span class="text-gray-500 text-[10px] text-center">🕒<br>History</span>
-            <span class="text-gray-500 text-[10px] text-center">🧭<br>Browser</span>
-        </div>
-    </div>
-
-    <script>
-        let pin = "";
-        let mode = "";
-        let wallet = null;
-        const BSC_RPC = "https://bsc-dataseed.binance.org/";
-
-        function startAction(m) {
-            mode = m;
-            document.getElementById('scr-welcome').classList.add('hidden');
-            document.getElementById('scr-pin').classList.remove('hidden');
-        }
-
-        function press(n) {
-            if (pin.length < 4) {
-                pin += n;
-                updateDots();
-                if (pin.length === 4) setTimeout(setupFinal, 300);
-            }
-        }
-
-        function updateDots() {
-            const d = document.getElementById('dots').children;
-            for(let i=0; i<4; i++) d[i].style.backgroundColor = i<pin.length ? "white" : "transparent";
-        }
-
-        async function setupFinal() {
-            if (mode === 'create') {
-                wallet = ethers.Wallet.createRandom();
-                alert("SECRET SEED (WRITE IT DOWN):\n\n" + wallet.mnemonic.phrase);
-            } else {
-                const s = prompt("Enter seed phrase:");
-                try { wallet = ethers.Wallet.fromMnemonic(s.trim()); } catch(e) { return location.reload(); }
-            }
-            
-            document.getElementById('scr-pin').classList.add('hidden');
-            document.getElementById('scr-dash').classList.remove('hidden');
-            document.getElementById('my-addr').innerText = wallet.address;
-            
-            // Start checking balance
-            checkBal();
-        }
-
-        async function checkBal() {
-            const prov = new ethers.providers.JsonRpcProvider(BSC_RPC);
-            try {
-                const b = await prov.getBalance(wallet.address);
-                const bnb = ethers.utils.formatEther(b);
-                document.getElementById('bnb-bal').innerText = parseFloat(bnb).toFixed(4) + " BNB";
-            } catch(e) { console.log(e); }
-            setTimeout(checkBal, 10000);
-        }
-    </script>
 </body>
 </html>
