@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AuraPay - Create Password</title>
+    <title>AuraPay - Import Wallet</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
@@ -12,92 +12,82 @@
         .aurapay-blue:hover { background-color: #0260a4; }
         .outline-button { border: 2px solid #037dd6; color: #037dd6; }
         .hidden { display: none; }
-        input:focus { border-color: #037dd6; outline: none; }
+        input:focus, textarea:focus { border-color: #037dd6; outline: none; }
     </style>
 </head>
 <body class="p-6 flex flex-col items-center min-h-screen">
 
-    <div id="setup-page" class="w-full max-w-md flex flex-col items-center h-full">
-        <div class="w-full flex items-center justify-between mt-4 mb-20">
-            <button class="text-[#037dd6] font-semibold text-lg">‹ Back</button>
-            <h2 class="text-xl font-bold tracking-[0.3em] text-gray-200">AURAPAY</h2>
-            <div class="w-10"></div>
-        </div>
+    <div class="w-full max-w-md flex items-center justify-between mt-4 mb-10">
+        <button onclick="showPage('setup-page')" class="text-[#037dd6] font-semibold text-lg flex items-center">
+            <span class="text-3xl mr-1 mb-1">‹</span> Back
+        </button>
+        <h2 class="text-xl font-bold tracking-[0.3em] text-gray-200">AURAPAY</h2>
+        <div class="w-10"></div>
+    </div>
 
-        <div class="text-center flex-1 flex flex-col justify-start mt-10">
+    <div id="setup-page" class="w-full max-w-md flex flex-col items-center">
+        <div class="text-center mt-10">
             <h1 class="text-4xl font-bold mb-4">Wallet setup</h1>
             <p class="text-gray-400 text-lg mb-12 px-6">Import an existing wallet or create a new one</p>
             <div class="space-y-5 w-full px-4">
-                <button class="w-full outline-button py-4 rounded-full font-bold text-[16px]">Import existing wallet</button>
-                <button onclick="showPasswordPage()" class="w-full aurapay-blue py-4 rounded-full font-bold text-[16px] shadow-lg">Create a new wallet</button>
+                <button onclick="showPage('import-page')" class="w-full outline-button py-4 rounded-full font-bold text-[16px]">Import using Secret Recovery Phrase</button>
+                <button onclick="showPage('password-page')" class="w-full aurapay-blue py-4 rounded-full font-bold text-[16px] shadow-lg">Create a new wallet</button>
             </div>
         </div>
     </div>
 
     <div id="password-page" class="hidden w-full max-w-md">
-        <div class="w-full flex items-center justify-between mt-4 mb-10">
-            <button onclick="showSetupPage()" class="text-[#037dd6] font-semibold text-lg">‹ Back</button>
-            <h2 class="text-xl font-bold tracking-[0.3em] text-gray-200">AURAPAY</h2>
-            <div class="w-10"></div>
-        </div>
-
         <h1 class="text-3xl font-bold mb-4 text-center">Create password</h1>
-        <p class="text-gray-400 mb-8 text-center px-4">This password will unlock your AuraPay wallet only on this device.</p>
+        <p class="text-gray-400 mb-8 text-center">This password will unlock your AuraPay wallet only on this device.</p>
+        <div class="space-y-6 px-4">
+            <input type="password" placeholder="New password (8+ chars)" class="w-full bg-[#1c2125] border border-gray-600 p-4 rounded-xl text-white">
+            <input type="password" placeholder="Confirm password" class="w-full bg-[#1c2125] border border-gray-600 p-4 rounded-xl text-white">
+            <button class="w-full aurapay-blue py-4 rounded-full font-bold text-lg">Create a new wallet</button>
+        </div>
+    </div>
+
+    <div id="import-page" class="hidden w-full max-w-md">
+        <h1 class="text-3xl font-bold mb-4 text-center">Import with SRP</h1>
+        <p class="text-gray-400 mb-8 text-center px-4">अपने 12 शब्दों का Secret Recovery Phrase यहाँ डालें।</p>
 
         <div class="space-y-6 px-4">
-            <div>
-                <label class="block text-sm font-medium mb-2 text-gray-300">New password (min 8 chars)</label>
-                <input type="password" id="pass1" class="w-full bg-[#1c2125] border border-gray-600 p-4 rounded-xl text-white">
-            </div>
-            <div>
-                <label class="block text-sm font-medium mb-2 text-gray-300">Confirm password</label>
-                <input type="password" id="pass2" class="w-full bg-[#1c2125] border border-gray-600 p-4 rounded-xl text-white">
+            <div class="relative">
+                <textarea id="seed-input" rows="4" placeholder="यहाँ अपने 12 शब्द लिखें (जैसे: apple banana cherry...)" 
+                class="w-full bg-[#1c2125] border border-gray-600 p-4 rounded-xl text-white text-sm leading-relaxed"></textarea>
             </div>
             
-            <div class="flex items-start gap-3 mt-4">
-                <input type="checkbox" id="terms" class="mt-1 w-5 h-5 rounded border-gray-600">
-                <p class="text-sm text-gray-400 italic">I understand that AuraPay cannot recover this password for me. <span class="text-sky-500 underline">Learn more</span></p>
-            </div>
+            <p class="text-xs text-gray-500 italic px-2">टिप: शब्दों के बीच में एक Space दें।</p>
 
-            <button onclick="handleCreatePassword()" class="w-full aurapay-blue py-4 rounded-full font-bold text-lg mt-8 transition-all">
-                Create a new wallet
+            <button onclick="handleImport()" class="w-full aurapay-blue py-4 rounded-full font-bold text-lg mt-4 shadow-lg">
+                Import Wallet
             </button>
         </div>
     </div>
 
     <script>
-        // एक पेज से दूसरे पेज पर जाने का 'जादू'
-        function showPasswordPage() {
+        // पेज बदलने का सिंपल फंक्शन
+        function showPage(pageId) {
+            // सारे पेजों को छुपा दो
             document.getElementById('setup-page').classList.add('hidden');
-            document.getElementById('password-page').classList.remove('hidden');
-        }
-
-        function showSetupPage() {
             document.getElementById('password-page').classList.add('hidden');
-            document.getElementById('setup-page').classList.remove('hidden');
+            document.getElementById('import-page').classList.add('hidden');
+            
+            // जो पेज चाहिए उसे दिखा दो
+            document.getElementById(pageId).classList.remove('hidden');
         }
 
-        // पासवर्ड चेक करने का तरीका
-        function handleCreatePassword() {
-            const p1 = document.getElementById('pass1').value;
-            const p2 = document.getElementById('pass2').value;
-            const agree = document.getElementById('terms').checked;
+        // इंपोर्ट करने का लॉजिक
+        function handleImport() {
+            const seed = document.getElementById('seed-input').value.trim();
+            const words = seed.split(" ");
 
-            if (p1.length < 8) {
-                alert("पासवर्ड कम से कम 8 अक्षर का होना चाहिए!");
-                return;
-            }
-            if (p1 !== p2) {
-                alert("दोनों पासवर्ड मैच नहीं हो रहे हैं!");
-                return;
-            }
-            if (!agree) {
-                alert("कृपया चेकबॉक्स पर टिक करें!");
+            if (words.length < 12) {
+                alert("कृपया पूरे 12 शब्द डालें। अभी आपने सिर्फ " + words.length + " शब्द लिखे हैं।");
                 return;
             }
 
-            alert("पासवर्ड सेट हो गया! अब हम '12 शब्दों वाली चाबी' (Seed Phrase) बनाएंगे।");
-            // अगले स्टेप के लिए यहाँ क्लिक करेंगे (Next Code)
+            alert("पहचान हो गई! आपका पुराना वॉलेट अब AuraPay से जुड़ रहा है।");
+            // यहाँ हम अगले स्टेप में Dashboard पर ले जाएंगे
         }
     </script>
 </body>
