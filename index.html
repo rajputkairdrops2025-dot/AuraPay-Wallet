@@ -3,39 +3,57 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AuraPay - Secure Crypto Wallet</title>
+    <title>AuraPay - World's Secure Wallet</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        body { background-color: #0d1117; color: white; font-family: 'Inter', sans-serif; }
-        .gradient-border { border: 2px solid; border-image: linear-gradient(to right, #00ffcc, #3366ff) 1; }
-    </style>
+    <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js" type="application/javascript"></script>
 </head>
-<body class="flex flex-col items-center justify-center min-h-screen">
+<body class="bg-[#0d1117] text-white flex flex-col items-center justify-center min-h-screen p-4">
 
-    <div class="text-center mb-10">
-        <h1 class="text-5xl font-bold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-600">
-            AURAPAY
-        </h1>
-        <p class="text-gray-400 mt-2 text-sm italic">Non-Custodial. 2FA Secured. Ultra Low Fee.</p>
-    </div>
+    <h1 class="text-4xl font-bold text-cyan-400 mb-2">AURAPAY</h1>
+    <p class="text-gray-400 mb-8 text-sm uppercase tracking-widest">Next-Gen Security</p>
 
-    <div class="bg-gray-900 p-8 rounded-3xl shadow-2xl w-80 text-center border border-gray-800">
-        <p class="text-gray-500 text-xs uppercase mb-1">Total Balance</p>
-        <h2 class="text-3xl font-bold mb-6">$0.00</h2>
-        
-        <div class="grid grid-cols-2 gap-4">
-            <button class="bg-blue-600 hover:bg-blue-700 py-3 rounded-xl font-bold transition">Send</button>
-            <button class="bg-gray-800 hover:bg-gray-700 py-3 rounded-xl font-bold transition">Receive</button>
+    <div id="setup-screen" class="bg-gray-900 p-8 rounded-[2rem] shadow-2xl w-full max-w-sm border border-gray-800 text-center">
+        <div class="mb-6">
+            <span class="text-5xl">🔐</span>
         </div>
+        <h2 class="text-xl font-bold mb-4">अपना सुरक्षित वॉलेट बनाएं</h2>
+        <button onclick="createWallet()" class="w-full bg-gradient-to-r from-blue-600 to-cyan-500 py-4 rounded-2xl font-bold text-lg hover:opacity-90 transition shadow-lg">
+            Create New Wallet
+        </button>
     </div>
 
-    <div class="fixed bottom-6 bg-gray-900/80 backdrop-blur-md px-6 py-4 rounded-full flex gap-10 border border-gray-700">
-        <span>🏠</span>
-        <span>🔄</span>
-        <span class="bg-blue-500 p-2 rounded-full -mt-2">🔘</span>
-        <span>🔍</span>
-        <span>👛</span>
+    <div id="wallet-screen" class="hidden bg-gray-900 p-8 rounded-[2rem] shadow-2xl w-full max-w-sm border border-gray-800">
+        <p class="text-gray-500 text-xs text-center">MY ADDRESS</p>
+        <p id="addr" class="text-[10px] text-cyan-300 text-center break-all mb-6 font-mono bg-black/30 p-2 rounded-lg"></p>
+        
+        <div class="text-center mb-8">
+            <p class="text-gray-500 text-xs uppercase">Balance</p>
+            <h2 class="text-4xl font-bold text-white">$0.00</h2>
+        </div>
+
+        <div class="bg-yellow-900/20 border border-yellow-700/50 p-4 rounded-xl mb-6 text-center">
+            <p class="text-yellow-500 text-[10px] font-bold uppercase mb-1">⚠️ Secret Seed Phrase (इसे लिख लें)</p>
+            <p id="seed" class="text-xs text-yellow-200 italic break-words"></p>
+        </div>
+        
+        <button onclick="location.reload()" class="w-full bg-gray-800 py-3 rounded-xl text-sm font-semibold">Log Out</button>
     </div>
 
+    <script>
+        async function createWallet() {
+            // 1. नया वॉलेट जनरेट करना
+            const wallet = ethers.Wallet.createRandom();
+            
+            // 2. स्क्रीन बदलना
+            document.getElementById('setup-screen').classList.add('hidden');
+            document.getElementById('wallet-screen').classList.remove('hidden');
+            
+            // 3. डेटा दिखाना
+            document.getElementById('addr').innerText = wallet.address;
+            document.getElementById('seed').innerText = wallet.mnemonic.phrase;
+            
+            alert("बधाई हो! आपका वॉलेट बन गया। अपनी 12 शब्दों की चाबी सुरक्षित रखें।");
+        }
+    </script>
 </body>
 </html>
