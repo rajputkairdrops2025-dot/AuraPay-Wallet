@@ -3,96 +3,169 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AuraPay - Premium Wallet</title>
+    <title>AuraPay - Professional Web3 Wallet</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
     <style>
+        :root {
+            --mehandi-dark: #0b140d; /* डार्क मेहंदी रंग */
+            --mehandi-light: #1a2e1f;
+        }
         body {
-            background: radial-gradient(circle at center, #1a2a3a 0%, #0a0e14 100%);
+            background-color: var(--mehandi-dark);
             color: white;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            font-family: -apple-system, system-ui, sans-serif;
+            overflow: hidden;
         }
-        .ton-glow {
-            box-shadow: 0 0 50px rgba(56, 189, 248, 0.1);
-        }
-        .glass-card {
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-        }
+        .btn-blue { background-color: #007aff; }
+        .glass-card { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); }
+        .numpad-btn { background: rgba(255, 255, 255, 0.08); border-radius: 50%; width: 70px; height: 70px; font-size: 24px; }
+        .hidden { display: none; }
     </style>
 </head>
-<body class="flex flex-col items-center justify-between min-h-screen p-8">
+<body>
 
-    <div></div>
-
-    <div class="flex flex-col items-center">
-        <div class="w-32 h-32 bg-sky-500 rounded-[2rem] transform rotate-45 flex items-center justify-center shadow-[0_0_40px_rgba(14,165,233,0.4)] mb-12">
-            <span class="transform -rotate-45 text-5xl font-bold text-white tracking-tighter">AP</span>
+    <div id="screen-welcome" class="flex flex-col items-center justify-between min-h-screen p-8 w-full max-w-md mx-auto">
+        <div class="mt-20 flex flex-col items-center">
+            <div class="w-24 h-24 bg-sky-500 rounded-3xl rotate-45 flex items-center justify-center shadow-2xl mb-10">
+                <span class="rotate-[-45deg] text-4xl font-bold italic">AP</span>
+            </div>
+            <h1 class="text-3xl font-bold">AuraPay</h1>
+            <p class="text-gray-400 mt-2">Create a new wallet or add an existing one</p>
         </div>
-        
-        <h1 class="text-3xl font-bold mb-2">AuraPay</h1>
-        <p class="text-gray-400 text-center max-w-[250px] text-sm">Create a new wallet or add an existing one</p>
+        <div class="w-full space-y-4 mb-10">
+            <button onclick="goToPasscode('create')" class="w-full btn-blue py-4 rounded-2xl font-bold text-lg">Create New Wallet</button>
+            <button onclick="showImport()" class="w-full bg-white/10 py-4 rounded-2xl font-bold text-lg border border-white/10">Import Existing Wallet</button>
+        </div>
     </div>
 
-    <div class="w-full max-w-sm space-y-4 mb-4">
-        
-        <button onclick="generateNew()" class="w-full bg-[#38bdf8] hover:bg-[#0ea5e9] text-[#0a0e14] py-4 rounded-2xl font-bold text-lg transition-all active:scale-95 shadow-lg">
-            Create New Wallet
-        </button>
-
-        <button onclick="showImport()" class="w-full bg-[#1c252e] hover:bg-[#252f3a] text-white py-4 rounded-2xl font-bold text-lg transition-all active:scale-95 border border-gray-800">
-            Import Existing Wallet
-        </button>
-
+    <div id="screen-passcode" class="hidden flex flex-col items-center justify-center min-h-screen p-8 w-full max-w-md mx-auto">
+        <h2 class="text-2xl font-bold mb-2">Create passcode</h2>
+        <div class="flex gap-4 mb-20 mt-4">
+            <div id="dot-1" class="w-3 h-3 rounded-full border border-gray-500"></div>
+            <div id="dot-2" class="w-3 h-3 rounded-full border border-gray-500"></div>
+            <div id="dot-3" class="w-3 h-3 rounded-full border border-gray-500"></div>
+            <div id="dot-4" class="w-3 h-3 rounded-full border border-gray-500"></div>
+        </div>
+        <div class="grid grid-cols-3 gap-8">
+            <button class="numpad-btn" onclick="pressKey(1)">1</button>
+            <button class="numpad-btn" onclick="pressKey(2)">2</button>
+            <button class="numpad-btn" onclick="pressKey(3)">3</button>
+            <button class="numpad-btn" onclick="pressKey(4)">4</button>
+            <button class="numpad-btn" onclick="pressKey(5)">5</button>
+            <button class="numpad-btn" onclick="pressKey(6)">6</button>
+            <button class="numpad-btn" onclick="pressKey(7)">7</button>
+            <button class="numpad-btn" onclick="pressKey(8)">8</button>
+            <button class="numpad-btn" onclick="pressKey(9)">9</button>
+            <div></div>
+            <button class="numpad-btn" onclick="pressKey(0)">0</button>
+            <button class="text-2xl" onclick="backspace()">⌫</button>
+        </div>
     </div>
 
-    <div id="wallet-modal" class="hidden fixed inset-0 bg-black/90 backdrop-blur-xl flex items-center justify-center p-6 z-50">
-        <div class="glass-card w-full max-w-sm p-8 rounded-[2.5rem] text-center">
-            <div id="modal-icon" class="text-4xl mb-4">✨</div>
-            <h3 id="modal-title" class="text-xl font-bold mb-4">Your Wallet</h3>
-            
-            <div class="text-left space-y-4">
-                <div class="bg-black/20 p-4 rounded-xl">
-                    <p class="text-[10px] text-sky-400 font-bold uppercase mb-1">Address</p>
-                    <p id="disp-addr" class="text-[11px] font-mono break-all text-gray-300"></p>
-                </div>
-                <div id="seed-box" class="bg-yellow-500/5 p-4 rounded-xl border border-yellow-700/20">
-                    <p class="text-yellow-500 text-[10px] font-bold uppercase mb-1">Secret Recovery Phrase</p>
-                    <p id="disp-seed" class="text-[12px] italic text-yellow-100/70"></p>
+    <div id="screen-main" class="hidden flex flex-col min-h-screen w-full max-w-md mx-auto">
+        <div class="p-6 flex justify-between items-center">
+            <button class="text-xl">💬</button>
+            <div class="bg-white/10 px-4 py-1 rounded-full text-sm font-medium">Wallet ∨</div>
+            <button class="text-xl">⚙️</button>
+        </div>
+
+        <div class="text-center py-10">
+            <h1 id="main-balance" class="text-5xl font-bold">$0 <span class="text-xl text-sky-400">⚡</span></h1>
+            <p id="main-address" class="text-gray-500 text-xs mt-4 font-mono"></p>
+        </div>
+
+        <div class="grid grid-cols-3 gap-4 px-6 mb-8 text-center">
+            <div class="flex flex-col items-center"><button class="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center text-xl mb-2">↑</button><span class="text-xs">Send</span></div>
+            <div class="flex flex-col items-center"><button class="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center text-xl mb-2">↓</button><span class="text-xs">Receive</span></div>
+            <div class="flex flex-col items-center"><button class="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center text-xl mb-2">⛶</button><span class="text-xs">Scan</span></div>
+            <div class="flex flex-col items-center"><button class="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center text-xl mb-2">⇄</button><span class="text-xs">Swap</span></div>
+            <div class="flex flex-col items-center"><button class="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center text-xl mb-2">$</button><span class="text-xs">Buy</span></div>
+            <div class="flex flex-col items-center"><button class="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center text-xl mb-2">📈</button><span class="text-xs">Stake</span></div>
+        </div>
+
+        <div class="px-6 space-y-3 overflow-y-auto pb-24">
+            <h3 class="font-bold">Finish setting up</h3>
+            <div class="bg-white/5 p-4 rounded-2xl flex items-center gap-4">
+                <span class="text-2xl text-orange-400">🔑</span>
+                <div class="flex-1">
+                    <p class="text-sm font-bold">Back up your recovery phrase</p>
+                    <p class="text-[10px] text-gray-500">Without it, you can't restore your wallet</p>
                 </div>
             </div>
+            <div class="bg-white/5 p-4 rounded-2xl flex justify-between items-center">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-sky-500 rounded-full flex items-center justify-center font-bold">T</div>
+                    <div><p class="font-bold">TON</p><p class="text-[10px] text-gray-500">$1.29 <span class="text-red-500">-2.38%</span></p></div>
+                </div>
+                <div class="text-right"><p class="font-bold">0</p><p class="text-[10px] text-gray-500">$0</p></div>
+            </div>
+        </div>
 
-            <button onclick="location.reload()" class="mt-8 text-gray-500 hover:text-white text-sm">Close & Reset</button>
+        <div class="fixed bottom-0 w-full max-w-md bg-black/40 backdrop-blur-md flex justify-around py-4 border-t border-white/5">
+            <span class="text-sky-400 flex flex-col items-center text-[10px]">👛<br>Wallet</span>
+            <span class="text-gray-500 flex flex-col items-center text-[10px]">🕒<br>History</span>
+            <span class="text-gray-500 flex flex-col items-center text-[10px]">🧭<br>Browser</span>
+            <span class="text-gray-500 flex flex-col items-center text-[10px]">⭐<br>Collectibles</span>
         </div>
     </div>
 
     <script>
-        // नया वॉलेट बनाने के लिए
-        function generateNew() {
-            const wallet = ethers.Wallet.createRandom();
-            showScreen(wallet.address, wallet.mnemonic.phrase, "Wallet Created!");
+        let pin = "";
+        let mode = "";
+
+        function goToPasscode(m) {
+            mode = m;
+            document.getElementById('screen-welcome').classList.add('hidden');
+            document.getElementById('screen-passcode').classList.remove('hidden');
         }
 
-        // इम्पोर्ट करने के लिए (अभी सिर्फ अलर्ट दिखाएगा, अगले स्टेप में हम बॉक्स बनाएंगे)
-        function showImport() {
-            const phrase = prompt("Enter your 12-word recovery phrase:");
-            if (phrase) {
-                try {
-                    const wallet = ethers.Wallet.fromMnemonic(phrase.trim());
-                    showScreen(wallet.address, "Imported from seed", "Wallet Imported!");
-                    document.getElementById('seed-box').classList.add('hidden');
-                } catch (e) {
-                    alert("Invalid Seed Phrase! कृपया सही 12 शब्द डालें।");
+        function pressKey(num) {
+            if (pin.length < 4) {
+                pin += num;
+                updateDots();
+                if (pin.length === 4) {
+                    setTimeout(finishSetup, 300);
                 }
             }
         }
 
-        function showScreen(addr, seed, title) {
-            document.getElementById('wallet-modal').classList.remove('hidden');
-            document.getElementById('modal-title').innerText = title;
-            document.getElementById('disp-addr').innerText = addr;
-            document.getElementById('disp-seed').innerText = seed;
+        function backspace() {
+            pin = pin.slice(0, -1);
+            updateDots();
+        }
+
+        function updateDots() {
+            for (let i = 1; i <= 4; i++) {
+                const dot = document.getElementById(`dot-${i}`);
+                if (i <= pin.length) {
+                    dot.classList.add('bg-white');
+                } else {
+                    dot.classList.remove('bg-white');
+                }
+            }
+        }
+
+        function finishSetup() {
+            if (mode === 'create') {
+                const wallet = ethers.Wallet.createRandom();
+                localStorage.setItem('aura_addr', wallet.address);
+                document.getElementById('main-address').innerText = wallet.address.substring(0,6) + "..." + wallet.address.substring(38);
+                alert("Your Seed Phrase: " + wallet.mnemonic.phrase + "\n\nइसे सुरक्षित लिख लें!");
+            }
+            document.getElementById('screen-passcode').classList.add('hidden');
+            document.getElementById('screen-main').classList.remove('hidden');
+        }
+
+        function showImport() {
+            const seed = prompt("Enter 12-word seed phrase:");
+            if(seed) {
+                try {
+                    const wallet = ethers.Wallet.fromMnemonic(seed.trim());
+                    localStorage.setItem('aura_addr', wallet.address);
+                    goToPasscode('import');
+                } catch(e) { alert("Invalid Seed!"); }
+            }
         }
     </script>
 </body>
