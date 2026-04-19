@@ -3,80 +3,96 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AuraPay Wallet</title>
+    <title>AuraPay - Premium Wallet</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
+    <style>
+        body {
+            background: radial-gradient(circle at center, #1a2a3a 0%, #0a0e14 100%);
+            color: white;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+        .ton-glow {
+            box-shadow: 0 0 50px rgba(56, 189, 248, 0.1);
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+    </style>
 </head>
-<body class="bg-[#0b0e14] text-white flex items-center justify-center min-h-screen p-6 font-sans">
+<body class="flex flex-col items-center justify-between min-h-screen p-8">
 
-    <div class="w-full max-w-sm">
-        <div class="text-center mb-10">
-            <h1 class="text-4xl font-black text-cyan-400 tracking-tighter">AURAPAY</h1>
-            <p class="text-[10px] text-gray-500 tracking-[0.3em] uppercase mt-1">Next-Gen Security</p>
+    <div></div>
+
+    <div class="flex flex-col items-center">
+        <div class="w-32 h-32 bg-sky-500 rounded-[2rem] transform rotate-45 flex items-center justify-center shadow-[0_0_40px_rgba(14,165,233,0.4)] mb-12">
+            <span class="transform -rotate-45 text-5xl font-bold text-white tracking-tighter">AP</span>
         </div>
+        
+        <h1 class="text-3xl font-bold mb-2">AuraPay</h1>
+        <p class="text-gray-400 text-center max-w-[250px] text-sm">Create a new wallet or add an existing one</p>
+    </div>
 
-        <div id="setup-screen" class="bg-[#151b23] p-8 rounded-[2.5rem] border border-gray-800 shadow-2xl text-center">
-            <div class="bg-cyan-500/10 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
-                <span class="text-4xl">🔐</span>
-            </div>
-            <h2 class="text-xl font-bold mb-2">Welcome, Chief!</h2>
-            <p class="text-gray-400 text-sm mb-8">आपका सुरक्षित क्रिप्टो सफर यहाँ से शुरू होता है।</p>
+    <div class="w-full max-w-sm space-y-4 mb-4">
+        
+        <button onclick="generateNew()" class="w-full bg-[#38bdf8] hover:bg-[#0ea5e9] text-[#0a0e14] py-4 rounded-2xl font-bold text-lg transition-all active:scale-95 shadow-lg">
+            Create New Wallet
+        </button>
+
+        <button onclick="showImport()" class="w-full bg-[#1c252e] hover:bg-[#252f3a] text-white py-4 rounded-2xl font-bold text-lg transition-all active:scale-95 border border-gray-800">
+            Import Existing Wallet
+        </button>
+
+    </div>
+
+    <div id="wallet-modal" class="hidden fixed inset-0 bg-black/90 backdrop-blur-xl flex items-center justify-center p-6 z-50">
+        <div class="glass-card w-full max-w-sm p-8 rounded-[2.5rem] text-center">
+            <div id="modal-icon" class="text-4xl mb-4">✨</div>
+            <h3 id="modal-title" class="text-xl font-bold mb-4">Your Wallet</h3>
             
-            <button onclick="createWallet()" id="mainBtn" class="w-full bg-gradient-to-r from-blue-600 to-cyan-500 py-4 rounded-2xl font-bold text-lg active:scale-95 transition-all shadow-[0_0_20px_rgba(37,99,235,0.3)]">
-                Create New Wallet
-            </button>
-        </div>
-
-        <div id="wallet-screen" class="hidden animate-in fade-in zoom-in duration-300">
-            <div class="bg-[#151b23] p-6 rounded-[2.5rem] border border-gray-800 shadow-2xl">
-                <div class="text-center mb-6">
-                    <p class="text-gray-500 text-[10px] uppercase font-bold tracking-widest mb-1">Total Balance</p>
-                    <h3 class="text-4xl font-bold">$0.00</h3>
+            <div class="text-left space-y-4">
+                <div class="bg-black/20 p-4 rounded-xl">
+                    <p class="text-[10px] text-sky-400 font-bold uppercase mb-1">Address</p>
+                    <p id="disp-addr" class="text-[11px] font-mono break-all text-gray-300"></p>
                 </div>
-
-                <div class="space-y-4">
-                    <div class="bg-black/40 p-4 rounded-2xl border border-gray-800">
-                        <p class="text-cyan-500 text-[10px] font-bold mb-1 uppercase">Your Address</p>
-                        <p id="addr" class="text-[11px] font-mono break-all text-gray-300"></p>
-                    </div>
-
-                    <div class="bg-yellow-500/5 p-4 rounded-2xl border border-yellow-700/30">
-                        <p class="text-yellow-500 text-[10px] font-bold mb-1 uppercase">⚠️ Secret Seed Phrase</p>
-                        <p id="seed" class="text-[12px] italic text-yellow-200/80 leading-relaxed"></p>
-                    </div>
+                <div id="seed-box" class="bg-yellow-500/5 p-4 rounded-xl border border-yellow-700/20">
+                    <p class="text-yellow-500 text-[10px] font-bold uppercase mb-1">Secret Recovery Phrase</p>
+                    <p id="disp-seed" class="text-[12px] italic text-yellow-100/70"></p>
                 </div>
-
-                <button onclick="location.reload()" class="w-full mt-6 py-3 text-gray-500 text-sm font-medium hover:text-white transition">
-                    Logout & Reset
-                </button>
             </div>
+
+            <button onclick="location.reload()" class="mt-8 text-gray-500 hover:text-white text-sm">Close & Reset</button>
         </div>
     </div>
 
     <script>
-        function createWallet() {
-            const btn = document.getElementById('mainBtn');
-            btn.innerText = "Generating...";
-            btn.disabled = true;
+        // नया वॉलेट बनाने के लिए
+        function generateNew() {
+            const wallet = ethers.Wallet.createRandom();
+            showScreen(wallet.address, wallet.mnemonic.phrase, "Wallet Created!");
+        }
 
-            try {
-                // ethers.js से नया वॉलेट बनाना
-                const wallet = ethers.Wallet.createRandom();
-                
-                // स्क्रीन बदलना
-                document.getElementById('setup-screen').classList.add('hidden');
-                document.getElementById('wallet-screen').classList.remove('hidden');
-                
-                // डेटा भरना
-                document.getElementById('addr').innerText = wallet.address;
-                document.getElementById('seed').innerText = wallet.mnemonic.phrase;
-                
-                console.log("Wallet Created Successfully!");
-            } catch (error) {
-                alert("Error: " + error.message);
-                btn.innerText = "Create New Wallet";
-                btn.disabled = false;
+        // इम्पोर्ट करने के लिए (अभी सिर्फ अलर्ट दिखाएगा, अगले स्टेप में हम बॉक्स बनाएंगे)
+        function showImport() {
+            const phrase = prompt("Enter your 12-word recovery phrase:");
+            if (phrase) {
+                try {
+                    const wallet = ethers.Wallet.fromMnemonic(phrase.trim());
+                    showScreen(wallet.address, "Imported from seed", "Wallet Imported!");
+                    document.getElementById('seed-box').classList.add('hidden');
+                } catch (e) {
+                    alert("Invalid Seed Phrase! कृपया सही 12 शब्द डालें।");
+                }
             }
+        }
+
+        function showScreen(addr, seed, title) {
+            document.getElementById('wallet-modal').classList.remove('hidden');
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('disp-addr').innerText = addr;
+            document.getElementById('disp-seed').innerText = seed;
         }
     </script>
 </body>
